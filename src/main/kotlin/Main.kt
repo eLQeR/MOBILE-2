@@ -1,3 +1,8 @@
+import java.util.logging.Logger
+import java.util.logging.Level
+import java.util.logging.ConsoleHandler
+import java.util.logging.SimpleFormatter
+
 fun calculateEmissionFactor(Qri: Double, Ar: Double, aVin: Double, etaZu: Double, GVin: Double): Double {
     return (1000000.0 / Qri) * (Ar / 100.0) * aVin * (1 - etaZu) / (1 - GVin / 100.0)
 }
@@ -7,6 +12,14 @@ fun calculateGrossEmission(k: Double, B: Double, Qri: Double): Double {
 }
 
 fun main() {
+    // Configure logger
+    val logger = Logger.getLogger("EmissionCalculator")
+    val handler = ConsoleHandler()
+    handler.formatter = SimpleFormatter()
+    logger.addHandler(handler)
+    logger.level = Level.INFO
+    logger.useParentHandlers = false
+
     // Constants
     val etaZu = 0.985 // Efficiency of dust collection
 
@@ -40,12 +53,12 @@ fun main() {
     val totalEGross = EGrossCoal + EGrossMazut + EGrossGas
 
     // Output results
-    println("Emission results for Variant 3:")
-    println("Coal emission factor: %.2f g/GJ".format(kCoal))
-    println("Coal gross emission: %.2f tons".format(EGrossCoal))
-    println("Fuel oil emission factor: %.2f g/GJ".format(kMazut))
-    println("Fuel oil gross emission: %.2f tons".format(EGrossMazut))
-    println("Natural gas emission factor: %.2f g/GJ".format(kGas))
-    println("Natural gas gross emission: %.2f tons".format(EGrossGas))
-    println("Total gross emission: %.2f tons".format(totalEGross))
+    logger.info("Emission results for Variant 3:")
+    logger.info("Coal emission factor: %.2f g/GJ".format(kCoal))
+    logger.info("Coal gross emission: %.2f tons".format(EGrossCoal))
+    logger.info("Fuel oil emission factor: %.2f g/GJ".format(kMazut))
+    logger.info("Fuel oil gross emission: %.2f tons".format(EGrossMazut))
+    logger.info("Natural gas emission factor: %.2f g/GJ".format(kGas))
+    logger.info("Natural gas gross emission: %.2f tons".format(EGrossGas))
+    logger.info("Total gross emission: %.2f tons".format(totalEGross))
 }
