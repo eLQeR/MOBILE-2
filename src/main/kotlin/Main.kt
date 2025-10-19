@@ -1,7 +1,22 @@
 import java.util.logging.Logger
 import java.util.logging.Level
 import java.util.logging.ConsoleHandler
-import java.util.logging.SimpleFormatter
+import java.util.logging.Formatter
+import java.util.logging.LogRecord
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
+class CompactLogFormatter : Formatter() {
+    private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS")
+    
+    override fun format(record: LogRecord): String {
+        val timestamp = Instant.ofEpochMilli(record.millis)
+            .atZone(ZoneId.systemDefault())
+            .format(timeFormatter)
+        return "${record.level} $timestamp ${record.message}\n"
+    }
+}
 
 fun calculateEmissionFactor(Qri: Double, Ar: Double, aVin: Double, etaZu: Double, GVin: Double): Double {
     return (1000000.0 / Qri) * (Ar / 100.0) * aVin * (1 - etaZu) / (1 - GVin / 100.0)
@@ -15,7 +30,7 @@ fun main() {
     // Configure logger
     val logger = Logger.getLogger("EmissionCalculator")
     val handler = ConsoleHandler()
-    handler.formatter = SimpleFormatter()
+    handler.formatter = CompactLogFormatter()
     logger.addHandler(handler)
     logger.level = Level.INFO
     logger.useParentHandlers = false
